@@ -12,16 +12,16 @@
         <nav>
             <ul>
                 <li><a href="#">Dashboard</a></li>
-                <li><a href="#">Applications</a></li>
-                <li><a href="#">Members</a></li>
-                <li><a href="#">Contributions</a></li>
-                <li><a href="#">Announcements</a></li>
+                <li><a href="#applications">Applications</a></li>
+                <li><a href="#members">Members</a></li>
+                <li><a href="#contributions">Contributions</a></li>
+                <li><a href="#announcements">Announcements</a></li>
                 <li><a href="../index.html">Logout</a></li> 
             </ul>
         </nav>
     </header>
     <main>
-        <head>Leadership Dashboard</head>
+        <h2>Leadership Dashboard</h2>
         <div class="welcome-section">
             <h3>Welcome, Patrick!</h3>
             <p>Here's an overview of Kavuus Group operations.</p>
@@ -69,7 +69,9 @@
                         <td>Patrick Kisyula</td>
                         <td>10/11/2026</td>
                         <td>Pending</td>
-                        <td>Review</td>
+                        <td>
+                            <button type="button">Review</button>
+                        </td>
                     </tr>
                      <tr>
                         <td>David Kiptoo</td>
@@ -77,7 +79,9 @@
                         <td>Patrick Kisyula</td>
                         <td>10/11/2026</td>
                         <td>Pending</td>
-                        <td>Review</td>
+                        <td>
+                            <button type="button">Review</button>
+                        </td>
                     </tr>
                      <tr>
                         <td>Mary Njeri</td>
@@ -85,10 +89,26 @@
                         <td>Fredrick Kioko</td>
                         <td>10/11/2026</td>
                         <td>Approved</td>
-                        <td>View</td>
+                        <td>
+                            <button type="button">Review</button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
+            <div id="application-review">
+                <h3>Review Membership Application</h3>
+                <div class="member-profile">
+                    <p><strong>Applicant Name:</strong> Jane Wanjiku</p>
+                    <p><strong>ID Number:</strong> 12345678</p>
+                    <p><strong>Supported By:</strong> Patrick Kisyula</p>
+                    <p><strong>Application Date:</strong> 10/11/2026</p>
+                    <p><strong>Status:</strong> Pending</p>
+                </div>
+                <div class="application-actions">
+                    <button type="button">Approve Application</button>
+                    <button type="button">Reject Application</button>
+                </div>
+            </div>
         </section>
         <section id="members">
             <h3>Registered Members</h3>
@@ -101,6 +121,7 @@
                         <th>Date Joined</th>
                         <th>Total Contributions</th>
                         <th>Membership Status</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -110,6 +131,10 @@
                         <td>01/01/2026</td>
                         <td>KSh 8,000</td>
                         <td>Active</td>
+                        <td>
+                            <button type="button">View</button>
+                            <button type="button">Edit</button>
+                        </td>
                     </tr>
                     <tr>
                         <td>KVG002</td>
@@ -117,6 +142,10 @@
                         <td>01/01/2026</td>
                         <td>KSh 8,000</td>
                         <td>Active</td>
+                        <td>
+                            <button type="button">View</button>
+                            <button type="button">Edit</button>
+                        </td>
                     </tr>
                       <tr>
                         <td>KVG003</td>
@@ -124,6 +153,10 @@
                         <td>01/02/2026</td>
                         <td>KSh 6,000</td>
                         <td>Active</td>
+                        <td>
+                            <button type="button">View</button>
+                            <button type="button">Edit</button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -136,7 +169,11 @@
                         <th>Membership Number</th>
                         <th>Member Name</th>
                         <th>Month</th>
-                        <th>Amount</th>
+                        <th>Amount Due</th>
+                        <th>Amount Paid</th>
+                        <th>Outstanding Balance</th>
+                        <th>Last Payment Date</th>
+                        <th>M-Pesa Transaction Reference</th>
                         <th>Payment Status</th>
                     </tr>
                 </thead>
@@ -146,24 +183,114 @@
                         <td>Patrick Kisyula</td>
                         <td>January 2026</td>
                         <td>KSh 2,000</td>
+                        <td>KSh 2,000</td>
+                        <td>KSh 0</td>
+                        <td>10/01/2026</td>
+                        <td>QWE123ABC</td>
                         <td>Paid</td>
                     </tr>
-                      <tr>
+
+                    <tr>
                         <td>KVG002</td>
                         <td>Jane Wanjiku</td>
                         <td>January 2026</td>
                         <td>KSh 2,000</td>
-                        <td>Paid</td>
+                        <td>KSh 1,200</td>
+                        <td>KSh 800</td>
+                        <td>08/01/2026</td>
+                        <td>ABC456XYZ</td>
+                        <td>Partially Paid</td>
                     </tr>
-                       <tr>
+
+                    <tr>
                         <td>KVG003</td>
                         <td>David Kiptoo</td>
                         <td>January 2026</td>
+                        <td>KSh 2,000</td>
                         <td>KSh 0</td>
+                        <td>KSh 2,000</td>
+                        <td>—</td>
+                        <td>—</td>
                         <td>Not Paid</td>
                     </tr>
                 </tbody>
             </table>
+             <div class="dashboard-cards">
+                <div class="dashboard-card">
+                    <h3>Expected Contributions</h3>
+                    <p>KSh 22,000</p>
+                </div>
+
+                <div class="dashboard-card">
+                    <h3>Contributions Received</h3>
+                    <p>KSh 5,200</p>
+                </div>
+
+                <div class="dashboard-card">
+                    <h3>Outstanding Contributions</h3>
+                    <p>KSh 16,800</p>
+                </div>
+                <div>
+                    <h3>M-Pesa Transaction History</h3>
+                    <table class="contribution-table">
+                        <thead>
+                            <tr>
+                                <th>Transaction Date</th>
+                                <th>Member Name</th>
+                                <th>Membership Number</th>
+                                <th>M-Pesa Reference</th>
+                                <th>Amount</th>
+                                <th>Verification Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>02/01/2026</td>
+                                <td>Jane Wanjiku</td>
+                                <td>KVG002</td>
+                                <td>ABC456XYZ</td>
+                                <td>KSh 500</td>
+                                <td>Verified</td>
+                            </tr>
+
+                            <tr>
+                                <td>05/01/2026</td>
+                                <td>Jane Wanjiku</td>
+                                <td>KVG002</td>
+                                <td>DEF789GHI</td>
+                                <td>KSh 400</td>
+                                <td>Verified</td>
+                            </tr>
+
+                            <tr>
+                                <td>08/01/2026</td>
+                                <td>Jane Wanjiku</td>
+                                <td>KVG002</td>
+                                <td>JKL123MNO</td>
+                                <td>KSh 300</td>
+                                <td>Verified</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="dashboard-cards">
+                        <div class="dashboard-card">
+                            <h3>Total Transactions</h3>
+                            <p>3</p>
+                        </div>
+
+                        <div class="dashboard-card">
+                            <h3>Verified Payments</h3>
+                            <p>KSh 1,200</p>
+                        </div>
+
+                        <div class="dashboard-card">
+                            <h3>Pending Verification</h3>
+                            <p>KSh 0</p>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
         </section>
         <section id="dispatch">
             <h3>Dispatch Management</h3>
@@ -195,7 +322,126 @@
                     
                 </tbody>
             </table>
+            <div class="dashboard-cards">
+                <div class="dashboard-card">
+                    <h3>Total Advances Issued</h3>
+                    <p>KSh 80,000</p>
+                </div>
+
+                        <div class="dashboard-card">
+                            <h3>Total Advances Repaid</h3>
+                            <p>KSh 10,000</p>
+                        </div>
+
+                        <div class="dashboard-card">
+                            <h3>Outstanding Advances</h3>
+                            <p>KSh 70,000</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>Individual Advance Records</h3>
+                        <table class="contribution-table">
+                            <thead>
+                                <tr>
+                                    <th>Membership Number</th>
+                                    <th>Member Name</th>
+                                    <th>Original Advance</th>
+                                    <th>Amount Repaid</th>
+                                    <th>Outstanding Balance</th>
+                                    <th>Repayment Status</th>
+                                </tr>
+                            </thead>
+                           <tbody>
+                                <tr>
+                                    <td>KVG001</td>
+                                    <td>Patrick Kisyula</td>
+                                    <td>KSh 80,000</td>
+                                    <td>KSh 10,000</td>
+                                    <td>KSh 70,000</td>
+                                    <td>Repaying</td>
+                                </tr>
+
+                                <tr>
+                                    <td>KVG002</td>
+                                    <td>Jane Wanjiku</td>
+                                    <td>KSh 80,000</td>
+                                    <td>KSh 0</td>
+                                    <td>KSh 80,000</td>
+                                    <td>Not Started</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div>
+                            <h3>Advance Repayment History</h3>
+                            <table class="contribution-table">
+                                <thead>
+                                    <tr>
+                                        <th>Payment Date</th>
+                                        <th>Membership Number</th>
+                                        <th>Member Name</th>
+                                        <th>M-Pesa Reference</th>
+                                        <th>Amount Repaid</th>
+                                        <th>Verification Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>10/01/2026</td>
+                                        <td>KVG001</td>
+                                        <td>Patrick Kisyula</td>
+                                        <td>XYZ123ABC</td>
+                                        <td>KSh 5,000</td>
+                                        <td>Verified</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>10/02/2026</td>
+                                        <td>KVG001</td>
+                                        <td>Patrick Kisyula</td>
+                                        <td>XYZ456DEF</td>
+                                        <td>KSh 5,000</td>
+                                        <td>Verified</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+           
         </section>
+        <section id="financial-reports">
+            <h3>Group Financial Reports</h3>
+            <div class="dashboard-cards">
+                <div class="dashboard-card">
+                    <h3>Total Contributions Collected</h3>
+                    <p>KSh 22,000</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Total Dispatch Advances Issued</h3>
+                    <p>KSh 80,000</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Advance Repayments Received</h3>
+                    <p>KSh 10,000</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Outstanding Advances</h3>
+                    <p>KSh 70,000</p>
+                </div>
+                 <div class="dashboard-card">
+                    <h3>Total Fines Collected</h3>
+                    <p>KSh 500</p>
+                </div>
+                 <div class="dashboard-card">
+                    <h3>Outstanding Fines</h3>
+                    <p>KSh 500</p>
+                </div>
+                 <div class="dashboard-card">
+                    <h3>Available Group Reserve</h3>
+                    <p>KSh 8,000</p>
+                </div>
+            </div>
+        </section>
+     
         <section id="announcements">
             <h3>Group Announcements</h3>
             <form action="" >
@@ -205,14 +451,15 @@
                 </div>
                   <div class="form-group">
                     <label for="announcement-message">Announcement Message</label>
-                   <textarea name="announcement-message" name="announcementMessage" required></textarea>
+                   <textarea id="announcement-message" name="announcementMessage" required></textarea>
                 </div>
                 <button type="submit" class="cta-button"> Publish Announcement</button>
             </form>
         </section>
         <section id="responsibilities">
             <h3>Leadership Responsibilities</h3>
-            <div class="dashboard-card">
+            <div class="dashboard-cards">
+                <div class="dashboard-card">
                 <h4>ChairPerson</h4>
                 <p>Overall group administration</p>
             </div>
@@ -227,6 +474,7 @@
             <div class="dashboard-card">
                 <h4>Secretary</h4>
                 <p>Manages membership records and announcements.</p>
+            </div>
             </div>
         </section>
     </main>
