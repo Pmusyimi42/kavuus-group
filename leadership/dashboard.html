@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kavuus Group | Leadership Dashboard</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Kavuus Group</h1>
+        <nav>
+            <ul>
+                <li><a href="#">Dashboard</a></li>
+                <li><a href="#">Applications</a></li>
+                <li><a href="#">Members</a></li>
+                <li><a href="#">Contributions</a></li>
+                <li><a href="#">Announcements</a></li>
+                <li><a href="../index.html">Logout</a></li> 
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <head>Leadership Dashboard</head>
+        <div class="welcome-section">
+            <h3>Welcome, Patrick!</h3>
+            <p>Here's an overview of Kavuus Group operations.</p>
+        </div>
+
+        <div class="dashboard-cards">
+            <div class="dashboard-card">
+                <h3>Total Members</h3>
+                <p>11</p>
+            </div>
+            <div class="dashboard-card">
+                <h3>Pending Applications</h3>
+                <p>3</p>
+            </div>
+             <div class="dashboard-card">
+                <h3>Monthly Contributions</h3>
+                <p>KSh 22,000</p>
+            </div>
+             <div class="dashboard-card">
+                <h3>Group Reserve</h3>
+                <p>KSh 8000</p>
+            </div>
+             <div class="dashboard-card">
+                <h3>Next Dispatch</h3>
+                <p>Upcoming</p>
+            </div>
+        </div>
+        <section id="applications">
+            <h3>Membership Applications</h3>
+            <table class="contribution-table">
+                <thead>
+                    <tr>
+                        <th>Applicant Name</th>
+                        <th>ID Number</th>
+                        <th>Supported By</th>
+                        <th>Application Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Jane Wanjiku</td>
+                        <td>********</td>
+                        <td>Patrick Kisyula</td>
+                        <td>10/11/2026</td>
+                        <td>Pending</td>
+                        <td>Review</td>
+                    </tr>
+                     <tr>
+                        <td>David Kiptoo</td>
+                        <td>********</td>
+                        <td>Patrick Kisyula</td>
+                        <td>10/11/2026</td>
+                        <td>Pending</td>
+                        <td>Review</td>
+                    </tr>
+                     <tr>
+                        <td>Mary Njeri</td>
+                        <td>********</td>
+                        <td>Fredrick Kioko</td>
+                        <td>10/11/2026</td>
+                        <td>Approved</td>
+                        <td>View</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section id="members">
+            <h3>Registered Members</h3>
+
+            <table class="contribution-table">
+                <thead>
+                    <tr>
+                        <th>Membership Number</th>
+                        <th>Full Name</th>
+                        <th>Date Joined</th>
+                        <th>Total Contributions</th>
+                        <th>Membership Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>KVG001</td>
+                        <td>Patrick Kisyula</td>
+                        <td>01/01/2026</td>
+                        <td>KSh 8,000</td>
+                        <td>Active</td>
+                    </tr>
+                    <tr>
+                        <td>KVG002</td>
+                        <td>Jane Wanjiku</td>
+                        <td>01/01/2026</td>
+                        <td>KSh 8,000</td>
+                        <td>Active</td>
+                    </tr>
+                      <tr>
+                        <td>KVG003</td>
+                        <td>David Kiptoo</td>
+                        <td>01/02/2026</td>
+                        <td>KSh 6,000</td>
+                        <td>Active</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section id="contributions">
+            <h3>Contribution Management</h3>
+            <table class="contribution-table">
+                <thead>
+                    <tr>
+                        <th>Membership Number</th>
+                        <th>Member Name</th>
+                        <th>Month</th>
+                        <th>Amount</th>
+                        <th>Payment Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>KVG001</td>
+                        <td>Patrick Kisyula</td>
+                        <td>January 2026</td>
+                        <td>KSh 2,000</td>
+                        <td>Paid</td>
+                    </tr>
+                      <tr>
+                        <td>KVG002</td>
+                        <td>Jane Wanjiku</td>
+                        <td>January 2026</td>
+                        <td>KSh 2,000</td>
+                        <td>Paid</td>
+                    </tr>
+                       <tr>
+                        <td>KVG003</td>
+                        <td>David Kiptoo</td>
+                        <td>January 2026</td>
+                        <td>KSh 0</td>
+                        <td>Not Paid</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section id="dispatch">
+            <h3>Dispatch Management</h3>
+            <table class="contribution-table">
+                <thead>
+                    <tr>
+                        <th>Dispatch Cycle</th>
+                        <th>Recipient Name</th>
+                        <th>Amount</th>
+                        <th>Date Received</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Cycle 1</td>
+                        <td>Patrick Kisyula</td>
+                        <td>KSh 80,000</td>
+                        <td>01/04/2026</td>
+                        <td>Received</td>
+                    </tr>
+                     <tr>
+                        <td>Cycle 1</td>
+                        <td>Jane Wanjiku</td>
+                        <td>KSh 80,000</td>
+                        <td>--</td>
+                        <td>Pending</td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </section>
+        <section id="announcements">
+            <h3>Group Announcements</h3>
+            <form action="" >
+                <div class="form-group">
+                    <label for="announcement-title">Announcement Title</label>
+                    <input type="text" id="announcement-title" name="announcementTitle" required>
+                </div>
+                  <div class="form-group">
+                    <label for="announcement-message">Announcement Message</label>
+                   <textarea name="announcement-message" name="announcementMessage" required></textarea>
+                </div>
+                <button type="submit" class="cta-button"> Publish Announcement</button>
+            </form>
+        </section>
+        <section id="responsibilities">
+            <h3>Leadership Responsibilities</h3>
+            <div class="dashboard-card">
+                <h4>ChairPerson</h4>
+                <p>Overall group administration</p>
+            </div>
+            <div class="dashboard-card">
+                <h4>Vice ChairPerson</h4>
+                <p>Supports the Chairperson.</p>
+            </div>
+            <div class="dashboard-card">
+                <h4>Treasurer</h4>
+                <p>Manages contributions, finances and dispatch records.</p>
+            </div>
+            <div class="dashboard-card">
+                <h4>Secretary</h4>
+                <p>Manages membership records and announcements.</p>
+            </div>
+        </section>
+    </main>
+    
+</body>
+</html>
