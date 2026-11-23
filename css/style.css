@@ -202,11 +202,98 @@ nav a {
 #application button:hover {
     background-color: #004d40;
 }
+
+#form-message {
+    color: #00695c;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+#application button:disabled {
+    background-color: #999;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.dashboard-cards {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin: 25px 0;
+}
+
+.dashboard-card {
+    flex: 1 1 180px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.contribution-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+}
+
+.contribution-table th,
+.contribution-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.contribution-table th {
+    background-color: #00695c;
+    color: white;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: #00695c;
+    color: white;
+
+}
+header ul {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+}
+
+header a {
+    color: white;
+    text-decoration: none;
+}
+.member-profile {
+    background-color: white;
+    padding: 20px;
+    margin: 25px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.member-profile h3 {
+    color: #00695c;
+    margin-top: 0;
+}
+
+.member-profile p {
+    margin: 12px 0;
+    color: #555;
+}
 @media (max-width: 768px) {
     .steps-container {
         flex-direction: column;
     }
     #application form {
         padding: 20px;
+    }
+
+    .dashboard-cards {
+        flex-direction: column;
     }
 }
