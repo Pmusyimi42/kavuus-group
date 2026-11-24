@@ -1,22 +1,26 @@
 const MONTHLY_CONTRIBUTION = 2000;
 const LATE_FINE = 100;
 const PAYMENT_DEADLINE = 5;
-function generateMonthlyContributions(members, month) {
+const contributionsTable = document.querySelector('#contributions-list');
+function generateMonthlyContributions(members, year, monthIndex) {
     const contributions = [];
 
     members.forEach(function(member) {
         const record = {
             membershipNumber: member.membershipNumber,
             memberName: member.fullName,
-            month: month,
+            month: new Date(year, monthIndex).toLocaleString('en', {
+                month: 'long',
+                year: 'numeric'
+            }),
             amountDue: MONTHLY_CONTRIBUTION,
             amountPaid: 0,
             balance: MONTHLY_CONTRIBUTION,
             fines: 0,
             paymentStatus: 'Not Paid',
             lastFineApplied: null,
-            year: 2026,
-            monthIndex: 0,
+            year: year,
+            monthIndex: monthIndex,
         };
 
         contributions.push(record);
@@ -25,27 +29,47 @@ function generateMonthlyContributions(members, month) {
     return contributions;
 }
 
-const testMembers = [
-    {
-        membershipNumber: 'KVG001',
-        fullName: 'Patrick Kisyula'
-    },
-    {
-        membershipNumber: 'KVG002',
-        fullName: 'Jane Wanjiku'
-    },
-    {
-        membershipNumber: 'KVG003',
-        fullName: 'David Kiptoo'
-    }
-];
+function getRegisteredMembers() {
+    return JSON.parse(localStorage.getItem('members')) || [];
+}
 
-const januaryRecords = generateMonthlyContributions(
-    testMembers,
-    'January 2026'
-);
+function createMonthlyRecords(year, monthIndex) {
+    const members = getRegisteredMembers();
 
-console.log(januaryRecords);
+    const contributions = generateMonthlyContributions(
+        members,
+        year,
+        monthIndex
+    );
+
+    return contributions;
+}
+
+function saveContributions(newContributions) {
+    const existingContributions = JSON.parse(
+        localStorage.getItem('contributions')
+    ) || [];
+
+    newContributions.forEach(function(newRecord) {
+        const alreadyExists = existingContributions.some(function(record) {
+            return (
+                record.membershipNumber === newRecord.membershipNumber &&
+                record.month === newRecord.month
+            );
+        });
+
+        if (!alreadyExists) {
+            existingContributions.push(newRecord);
+        }
+    });
+
+    localStorage.setItem(
+        'contributions',
+        JSON.stringify(existingContributions)
+    );
+}
+
+
 function calculateLateFine(contribution, currentDate) {
     const firstFineDate = new Date(
         contribution.year,
