@@ -285,6 +285,10 @@ header a {
     margin: 12px 0;
     color: #555;
 }
+
+[hidden] {
+    display: none !important;
+}
 @media (max-width: 768px) {
     .steps-container {
         flex-direction: column;
@@ -297,3 +301,4 @@ header a {
         flex-direction: column;
     }
 }
+

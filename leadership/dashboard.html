@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kavuus Group | Leadership Dashboard</title>
     <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/script.js" defer></script>
 </head>
 <body>
     <header>
@@ -62,8 +63,8 @@
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
+                <tbody id="applications-list">
+                    <!-- <tr>
                         <td>Jane Wanjiku</td>
                         <td>********</td>
                         <td>Patrick Kisyula</td>
@@ -92,27 +93,54 @@
                         <td>
                             <button type="button">Review</button>
                         </td>
-                    </tr>
+                    </tr> -->
                 </tbody>
             </table>
-            <div id="application-review">
+            <div id="application-review" hidden>
                 <h3>Review Membership Application</h3>
                 <div class="member-profile">
-                    <p><strong>Applicant Name:</strong> Jane Wanjiku</p>
-                    <p><strong>ID Number:</strong> 12345678</p>
-                    <p><strong>Supported By:</strong> Patrick Kisyula</p>
-                    <p><strong>Application Date:</strong> 10/11/2026</p>
-                    <p><strong>Status:</strong> Pending</p>
+                    <p><strong>Applicant Name:</strong> <span id="review-name">Jane Wanjiku</span></p>
+                    <p><strong>Phone Number:</strong> <span id="review-phone">-</span></p>
+                    <p><strong>Email:</strong> <span id="review-email">-</span></p>
+                    <p><strong>ID Number:</strong> <span id="review-id">12345678</span></p>
+                    <p><strong>Supported By:</strong> <span id="review-supporter">Patrick Kisyula</span></p>
+                    <p><strong>Application Date:</strong> <span id="review-date">-</span></p>
+                    <p><strong>Status:</strong> <span id="review-status">Pending</span></p>
                 </div>
-                <div class="application-actions">
-                    <button type="button">Approve Application</button>
-                    <button type="button">Reject Application</button>
+                <div class="application-actions" id="chairman-actions">
+                    <button type="button" id="approve-application">Approve Application</button>
+                    <button type="button" id="reject-application">Reject Application</button>
                 </div>
             </div>
         </section>
+        <section id="rejected-applications">
+            <h3>Rejected Applications</h3>
+
+            <table class="contribution-table">
+                <thead>
+                    <tr>
+                        <th>Applicant Name</th>
+                        <th>ID Number</th>
+                        <th>Supported By</th>
+                        <th>Application Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody id="rejected-applications-list">
+                </tbody>
+            </table>
+        </section>
         <section id="members">
             <h3>Registered Members</h3>
-
+            <div class="form-group">
+                <label for="member-search">Search Members</label>
+                <input
+                    type="search"
+                    id="member-search"
+                    placeholder="Search by name, membership number or phone..."
+                >
+            </div>
             <table class="contribution-table">
                 <thead>
                     <tr>
@@ -124,8 +152,8 @@
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
+                <tbody id="members-list">
+                    <!-- <tr>
                         <td>KVG001</td>
                         <td>Patrick Kisyula</td>
                         <td>01/01/2026</td>
@@ -157,9 +185,51 @@
                             <button type="button">View</button>
                             <button type="button">Edit</button>
                         </td>
-                    </tr>
+                    </tr> -->
                 </tbody>
             </table>
+        </section>
+        <section id="member-details" hidden>
+            <h3>Member Details</h3>
+            <p><strong>Membership Number:</strong> <span id="detail-number">-</span></p>
+            <p><strong>Full Name:</strong> <span id="detail-name">-</span></p>
+            <p><strong>Phone Number:</strong> <span id="detail-phone">-</span></p>
+            <p><strong>Email:</strong> <span id="detail-email">-</span></p>
+            <p><strong>National ID:</strong> <span id="detail-id">-</span></p>
+            <p><strong>Supporting Member:</strong> <span id="detail-supporter">-</span></p>
+            <p><strong>Date Joined:</strong> <span id="detail-date">-</span></p>
+            <p><strong>Status:</strong> <span id="detail-status">-</span></p>
+        </section>
+        <section id="edit-member-form" hidden>
+            <h3>Edit Member</h3>
+
+            <form id="member-edit-form">
+                <div class="form-group">
+                    <label for="edit-phone">Phone Number</label>
+                    <input type="tel" id="edit-phone" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-email">Email Address</label>
+                    <input type="email" id="edit-email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-supporter">Supporting Member</label>
+                    <input type="text" id="edit-supporter" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-status">Membership Status</label>
+                    <select id="edit-status">
+                        <option value="Active">Active</option>
+                        <option value="Suspended">Suspended</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+
+                <button type="submit">Save Changes</button>
+            </form>
         </section>
         <section id="contributions">
             <h3>Contribution Management</h3>
@@ -458,6 +528,16 @@
         </section>
         <section id="responsibilities">
             <h3>Leadership Responsibilities</h3>
+            <div class="role-selector">
+                <label for="leadership-role">View dashboard as:</label>
+
+                <select id="leadership-role">
+                    <option value="chairman">Chairman</option>
+                    <option value="vice-chairman">Vice Chairman</option>
+                    <option value="treasurer">Treasurer</option>
+                    <option value="secretary">Secretary</option>
+                </select>
+            </div>
             <div class="dashboard-cards">
                 <div class="dashboard-card">
                 <h4>ChairPerson</h4>
