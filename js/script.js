@@ -18,6 +18,7 @@ const editEmail = document.querySelector('#edit-email');
 const editSupporter = document.querySelector('#edit-supporter');
 const editStatus = document.querySelector('#edit-status');
 const memberSearch = document.querySelector('#member-search');
+const contributionsList = document.querySelector('#contributions-list');
 // --------------------------------------------------
 // 2. PANEL VISIBILITY
 // --------------------------------------------------
