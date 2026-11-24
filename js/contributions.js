@@ -69,6 +69,96 @@ function saveContributions(newContributions) {
     );
 }
 
+function getContributions() {
+    return JSON.parse(
+        localStorage.getItem('contributions')
+    ) || [];
+}
+function populateContributionMonthFilter() {
+    const contributions = getContributions();
+    const monthFilter = document.querySelector('#contribution-month');
+    const today = new Date();
+
+    const currentMonthKey =
+        `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+
+    const months = new Map();
+
+    // Always include the current month
+    months.set(
+        currentMonthKey,
+        today.toLocaleString('en', {
+            month: 'long',
+            year: 'numeric'
+        })
+    );
+
+    // Collect months from saved contribution records
+    contributions.forEach(function(contribution) {
+        const key =
+            `${contribution.year}-${String(contribution.monthIndex + 1).padStart(2, '0')}`;
+
+        months.set(key, contribution.month);
+    });
+
+    monthFilter.innerHTML = '';
+
+    [...months.entries()]
+        .sort((a, b) => b[0].localeCompare(a[0]))
+        .forEach(function([key, monthName]) {
+            const option = document.createElement('option');
+
+            option.value = key;
+            option.textContent = monthName;
+
+            monthFilter.appendChild(option);
+        });
+
+    monthFilter.value = currentMonthKey;
+}
+
+function renderContributions() {
+    const contributions = getContributions();
+    const monthFilter = document.querySelector('#contribution-month');
+    const selectedMonth = monthFilter.value;
+
+    const filteredContributions = contributions.filter(function(contribution) {
+        const contributionMonth =
+            `${contribution.year}-${String(contribution.monthIndex + 1).padStart(2, '0')}`;
+
+        return contributionMonth === selectedMonth;
+    });
+
+    contributionsTable.innerHTML = '';
+
+    if (filteredContributions.length === 0) {
+        contributionsTable.innerHTML = `
+            <tr>
+                <td colspan="9">No contribution records for this month.</td>
+            </tr>
+        `;
+        return;
+    }
+
+    filteredContributions.forEach(function(contribution) {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+            <td>${contribution.membershipNumber}</td>
+            <td>${contribution.memberName}</td>
+            <td>${contribution.month}</td>
+            <td>KSh ${contribution.amountDue.toLocaleString()}</td>
+            <td>KSh ${contribution.amountPaid.toLocaleString()}</td>
+            <td>KSh ${contribution.balance.toLocaleString()}</td>
+            <td>—</td>
+            <td>—</td>
+            <td>${contribution.paymentStatus}</td>
+        `;
+
+        contributionsTable.appendChild(row);
+    });
+}
+
 
 function calculateLateFine(contribution, currentDate) {
     const firstFineDate = new Date(
@@ -170,3 +260,60 @@ function allocatePayment(payment, contributions, fines, membershipNumber) {
         unallocatedAmount: payment
     };
 }
+populateContributionMonthFilter()
+renderContributions();
+updateContributionSummary();
+
+function updateContributionSummary() {
+    const contributions = getContributions();
+    const monthFilter = document.querySelector('#contribution-month');
+    const selectedMonth = monthFilter.value;
+
+    const filteredContributions = contributions.filter(function(contribution) {
+        const contributionMonth =
+            `${contribution.year}-${String(contribution.monthIndex + 1).padStart(2, '0')}`;
+
+        return contributionMonth === selectedMonth;
+    });
+
+    const expected = filteredContributions.reduce(function(total, contribution) {
+        return total + contribution.amountDue;
+    }, 0);
+
+    const received = filteredContributions.reduce(function(total, contribution) {
+        return total + contribution.amountPaid;
+    }, 0);
+
+    const outstanding = filteredContributions.reduce(function(total, contribution) {
+        return total + contribution.balance;
+    }, 0);
+
+    document.querySelector('#expected-contributions').textContent =
+        `KSh ${expected.toLocaleString()}`;
+
+    document.querySelector('#received-contributions').textContent =
+        `KSh ${received.toLocaleString()}`;
+
+    document.querySelector('#outstanding-contributions').textContent =
+        `KSh ${outstanding.toLocaleString()}`;
+}
+
+const monthFilter = document.querySelector('#contribution-month');
+
+monthFilter.addEventListener('change', function() {
+    renderContributions();
+    updateContributionSummary();
+});
+
+const today = new Date();
+
+const currentMonthContributions = createMonthlyRecords(
+    today.getFullYear(),
+    today.getMonth()
+);
+
+saveContributions(currentMonthContributions);
+
+console.log(
+    JSON.parse(localStorage.getItem('contributions'))
+);

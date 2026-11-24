@@ -234,6 +234,12 @@
         </section>
         <section id="contributions">
             <h3>Contribution Management</h3>
+            <div class="form-group">
+                <label for="contribution-month">Filter by Month</label>
+                <select id="contribution-month">
+                    <option value="current">Current Month</option>
+                </select>
+            </div>
             <table class="contribution-table">
                 <thead>
                     <tr>
@@ -289,17 +295,17 @@
              <div class="dashboard-cards">
                 <div class="dashboard-card">
                     <h3>Expected Contributions</h3>
-                    <p>KSh 22,000</p>
+                    <p id="expected-contributions">KSh 22,000</p>
                 </div>
 
                 <div class="dashboard-card">
                     <h3>Contributions Received</h3>
-                    <p>KSh 5,200</p>
+                    <p id="received-contributions">KSh 5,200</p>
                 </div>
 
                 <div class="dashboard-card">
                     <h3>Outstanding Contributions</h3>
-                    <p>KSh 16,800</p>
+                    <p id="outstanding-contributions">KSh 16,800</p>
                 </div>
                 <div>
                     <h3>M-Pesa Transaction History</h3>
