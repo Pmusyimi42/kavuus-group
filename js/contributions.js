@@ -164,6 +164,14 @@ function renderContributions() {
     });
 }
 
+function formatLocalDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+}
+
 
 function calculateLateFine(contribution, currentDate) {
     const firstFineDate = new Date(
@@ -186,13 +194,40 @@ function calculateLateFine(contribution, currentDate) {
 
     while (nextFineDate <= currentDate) {
         contribution.fines += LATE_FINE;
-        contribution.lastFineApplied = nextFineDate.toISOString().slice(0, 10);
+        contribution.lastFineApplied = formatLocalDate(nextFineDate);
 
         nextFineDate.setMonth(nextFineDate.getMonth() + 1);
     }
 
     return contribution.fines;
 }
+
+
+function updateContributionFines() {
+    const contributions = getContributions();
+    const today = new Date();
+
+    contributions.forEach(function(contribution) {
+        calculateLateFine(contribution, today);
+        
+        contribution.balance =
+            contribution.amountDue - contribution.amountPaid;
+
+        if (contribution.balance <= 0) {
+            contribution.paymentStatus = 'Paid';
+        } else if (contribution.amountPaid > 0) {
+            contribution.paymentStatus = 'Partially Paid';
+        } else {
+            contribution.paymentStatus = 'Not Paid';
+        }
+    });
+
+    localStorage.setItem(
+        'contributions',
+        JSON.stringify(contributions)
+    );
+}
+
 
 const fines = [
     {
@@ -273,6 +308,7 @@ renderMpesaTransactions();
 renderPendingPayments();
 renderMyPayments()
 renderMemberContributions();
+updateContributionFines();
 
 function updateContributionSummary() {
     const monthFilter = document.querySelector('#contribution-month');
@@ -379,6 +415,116 @@ function renderPendingPayments() {
         paymentsTable.appendChild(row);
     });
 }
+
+function allocateVerifiedPayment(payment) {
+    if (
+        !payment ||
+        payment.status !== 'Verified' ||
+        !payment.id ||
+        !payment.membershipNumber ||
+        !Number.isFinite(payment.amount) ||
+        payment.amount <= 0
+    ) {
+        return 0;
+    }
+    const contributions = getContributions();
+
+    const memberContributions = contributions.filter(function(contribution) {
+        return contribution.membershipNumber === payment.membershipNumber;
+    });
+    memberContributions.sort(function(a, b) {
+        return a.year - b.year || a.monthIndex - b.monthIndex;
+     });
+
+     let remainingAmount = payment.amount;
+     const memberCredits = JSON.parse(
+            localStorage.getItem('memberCredits')
+        ) || [];
+
+        const allocatedPayments = JSON.parse(
+            localStorage.getItem('allocatedPayments')
+        ) || [];
+
+        if (allocatedPayments.includes(payment.id)) {
+            return 0;
+        }
+
+    memberContributions.forEach(function(contribution) {
+        if (remainingAmount <= 0) return;
+
+        const finesPaid = contribution.finesPaid || 0;
+        const outstandingFine = contribution.fines - finesPaid;
+
+        if (outstandingFine > 0) {
+            const amountToPay = Math.min(
+                remainingAmount,
+                outstandingFine
+            );
+
+            contribution.finesPaid = finesPaid + amountToPay;
+            remainingAmount -= amountToPay;
+        }
+    });
+
+    memberContributions.forEach(function(contribution) {
+        if (remainingAmount <= 0) return;
+
+        const outstandingContribution =
+            contribution.amountDue - contribution.amountPaid;
+
+        if (outstandingContribution > 0) {
+            const amountToPay = Math.min(
+                remainingAmount,
+                outstandingContribution
+            );
+
+            contribution.amountPaid += amountToPay;
+            remainingAmount -= amountToPay;
+        }
+    });
+
+    if (remainingAmount > 0) {
+    memberCredits.push({
+        membershipNumber: payment.membershipNumber,
+        paymentId: payment.id,
+        amount: remainingAmount,
+        date: new Date().toISOString()
+    });
+}
+
+    memberContributions.forEach(function(contribution) {
+        contribution.balance =
+            contribution.amountDue - contribution.amountPaid;
+
+        if (contribution.balance <= 0) {
+            contribution.paymentStatus = 'Paid';
+        } else if (contribution.amountPaid > 0) {
+            contribution.paymentStatus = 'Partially Paid';
+        } else {
+            contribution.paymentStatus = 'Not Paid';
+        }
+    });
+
+    localStorage.setItem(
+        'contributions',
+        JSON.stringify(contributions)
+    );
+
+    if (remainingAmount > 0) {
+            localStorage.setItem(
+                'memberCredits',
+                JSON.stringify(memberCredits)
+            );
+        }
+
+        allocatedPayments.push(payment.id);
+
+        localStorage.setItem(
+            'allocatedPayments',
+            JSON.stringify(allocatedPayments)
+        );
+    return remainingAmount;
+}
 const pendingPaymentsTable = document.querySelector('#pending-payments-list');
 
 if (pendingPaymentsTable) {
@@ -396,8 +542,12 @@ if (pendingPaymentsTable) {
 
         if (!payment) return;
 
-        if (event.target.classList.contains('verify-payment-button')) {
+       if (event.target.classList.contains('verify-payment-button')) {
+            if (payment.status !== 'Pending') return;
+
             payment.status = 'Verified';
+
+            allocateVerifiedPayment(payment);
         }
 
         if (event.target.classList.contains('reject-payment-button')) {
@@ -543,7 +693,6 @@ function renderMemberContributions() {
         contributionsTable.appendChild(row);
     });
 }
-
 
 
 const paymentForm = document.querySelector('#payment-form');
