@@ -77,6 +77,8 @@ function getContributions() {
 function populateContributionMonthFilter() {
     const contributions = getContributions();
     const monthFilter = document.querySelector('#contribution-month');
+
+    if (!monthFilter) return;
     const today = new Date();
 
     const currentMonthKey =
@@ -118,8 +120,11 @@ function populateContributionMonthFilter() {
 }
 
 function renderContributions() {
-    const contributions = getContributions();
     const monthFilter = document.querySelector('#contribution-month');
+
+    if (!monthFilter || !contributionsTable) return;
+
+    const contributions = getContributions();
     const selectedMonth = monthFilter.value;
 
     const filteredContributions = contributions.filter(function(contribution) {
@@ -263,10 +268,24 @@ function allocatePayment(payment, contributions, fines, membershipNumber) {
 populateContributionMonthFilter()
 renderContributions();
 updateContributionSummary();
+populatePaymentMembers();
+renderMpesaTransactions();
+renderPendingPayments();
+renderMyPayments()
+renderMemberContributions();
 
 function updateContributionSummary() {
-    const contributions = getContributions();
     const monthFilter = document.querySelector('#contribution-month');
+
+    if (!monthFilter) return;
+
+    const expectedElement = document.querySelector('#expected-contributions');
+    const receivedElement = document.querySelector('#received-contributions');
+    const outstandingElement = document.querySelector('#outstanding-contributions');
+
+    if (!expectedElement || !receivedElement || !outstandingElement) return;
+
+    const contributions = getContributions();
     const selectedMonth = monthFilter.value;
 
     const filteredContributions = contributions.filter(function(contribution) {
@@ -288,22 +307,305 @@ function updateContributionSummary() {
         return total + contribution.balance;
     }, 0);
 
-    document.querySelector('#expected-contributions').textContent =
-        `KSh ${expected.toLocaleString()}`;
+    expectedElement.textContent = `KSh ${expected.toLocaleString()}`;
+    receivedElement.textContent = `KSh ${received.toLocaleString()}`;
+    outstandingElement.textContent = `KSh ${outstanding.toLocaleString()}`;
+}
 
-    document.querySelector('#received-contributions').textContent =
-        `KSh ${received.toLocaleString()}`;
+function populatePaymentMembers() {
+    const paymentMember = document.querySelector('#payment-member');
 
-    document.querySelector('#outstanding-contributions').textContent =
-        `KSh ${outstanding.toLocaleString()}`;
+    if (!paymentMember) return;
+
+    const members = getRegisteredMembers();
+
+    paymentMember.innerHTML = '<option value="">Select Member</option>';
+
+    members.forEach(function(member) {
+        const option = document.createElement('option');
+
+        option.value = member.membershipNumber;
+        option.textContent =
+            `${member.membershipNumber} - ${member.fullName}`;
+
+        paymentMember.appendChild(option);
+    });
+}
+
+function renderPendingPayments() {
+    const payments = JSON.parse(localStorage.getItem('payments')) || [];
+    const paymentsTable = document.querySelector('#pending-payments-list');
+    if (!paymentsTable) return;
+    paymentsTable.innerHTML = '';
+
+    const pendingPayments = payments.filter(function(payment) {
+        return payment.status === 'Pending';
+    });
+
+    if (pendingPayments.length === 0) {
+        paymentsTable.innerHTML = `
+            <tr>
+                <td colspan="7">No pending payments.</td>
+            </tr>
+        `;
+        return;
+    }
+
+    pendingPayments.forEach(function(payment) {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+            <td>${payment.membershipNumber}</td>
+            <td>KSh ${payment.amount.toLocaleString()}</td>
+            <td>${payment.paymentDate}</td>
+            <td>${payment.reference}</td>
+            <td>${payment.method}</td>
+            <td>${payment.status}</td>
+            <td>
+                <button type="button"
+                    class="verify-payment-button"
+                    data-payment-id="${payment.id}">
+                    Verify
+                </button>
+
+                <button type="button"
+                    class="reject-payment-button"
+                    data-payment-id="${payment.id}">
+                    Reject
+                </button>
+            </td>
+        `;
+
+        paymentsTable.appendChild(row);
+    });
+}
+const pendingPaymentsTable = document.querySelector('#pending-payments-list');
+
+if (pendingPaymentsTable) {
+    pendingPaymentsTable.addEventListener('click', function(event) {
+
+        const paymentId = event.target.dataset.paymentId;
+
+        if (!paymentId) return;
+
+        const payments = JSON.parse(localStorage.getItem('payments')) || [];
+
+        const payment = payments.find(function(item) {
+            return item.id === paymentId;
+        });
+
+        if (!payment) return;
+
+        if (event.target.classList.contains('verify-payment-button')) {
+            payment.status = 'Verified';
+        }
+
+        if (event.target.classList.contains('reject-payment-button')) {
+            payment.status = 'Rejected';
+        }
+
+        localStorage.setItem('payments', JSON.stringify(payments));
+
+        renderPendingPayments();
+        renderMpesaTransactions();
+    });
+}
+
+function renderMpesaTransactions() {
+    const transactionsTable = document.querySelector('#mpesa-transactions-list');
+
+    if (!transactionsTable) return;
+
+    const payments = JSON.parse(localStorage.getItem('payments')) || [];
+    const members = getRegisteredMembers();
+
+    transactionsTable.innerHTML = '';
+
+    if (payments.length === 0) {
+        transactionsTable.innerHTML = `
+            <tr>
+                <td colspan="6">No transactions recorded yet.</td>
+            </tr>
+        `;
+        return;
+    }
+
+    payments.forEach(function(payment) {
+        const member = members.find(function(member) {
+            return member.membershipNumber === payment.membershipNumber;
+        });
+
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+            <td>${payment.paymentDate}</td>
+            <td>${member ? member.fullName : 'Unknown Member'}</td>
+            <td>${payment.membershipNumber}</td>
+            <td>${payment.reference}</td>
+            <td>KSh ${payment.amount.toLocaleString()}</td>
+            <td>${payment.status}</td>
+        `;
+
+        transactionsTable.appendChild(row);
+    });
+}
+
+
+function renderMyPayments() {
+    const paymentsTable = document.querySelector('#my-payments-list');
+
+    if (!paymentsTable) return;
+
+    const payments = JSON.parse(localStorage.getItem('payments')) || [];
+
+    // Temporary member identity for testing
+    const currentMember = 'KVG001';
+
+    const myPayments = payments.filter(function(payment) {
+        return payment.membershipNumber === currentMember;
+    });
+
+    paymentsTable.innerHTML = '';
+
+    if (myPayments.length === 0) {
+        paymentsTable.innerHTML = `
+            <tr>
+                <td colspan="5">You have not recorded any payments yet.</td>
+            </tr>
+        `;
+        return;
+    }
+
+    myPayments.forEach(function(payment) {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+            <td>${payment.paymentDate}</td>
+            <td>${payment.reference}</td>
+            <td>KSh ${payment.amount.toLocaleString()}</td>
+            <td>${payment.method}</td>
+            <td>${payment.status}</td>
+        `;
+
+        paymentsTable.appendChild(row);
+    });
+}
+
+
+function renderMemberContributions() {
+    const contributionsTable = document.querySelector(
+        '#member-contributions-list'
+    );
+
+    if (!contributionsTable) return;
+
+    const contributions = getContributions();
+
+    // Temporary member identity for testing
+    const currentMember = 'KVG001';
+
+    const myContributions = contributions.filter(function(contribution) {
+        return contribution.membershipNumber === currentMember;
+    });
+
+    contributionsTable.innerHTML = '';
+
+    if (myContributions.length === 0) {
+        contributionsTable.innerHTML = `
+            <tr>
+                <td colspan="5">No contribution records found.</td>
+            </tr>
+        `;
+        return;
+    }
+
+    myContributions.forEach(function(contribution) {
+        const balance = contribution.amountDue - contribution.amountPaid;
+
+        let status = 'Unpaid';
+
+        if (balance <= 0) {
+            status = 'Paid';
+        } else if (contribution.amountPaid > 0) {
+            status = 'Partially Paid';
+        }
+
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+            <td>${contribution.month}</td>
+            <td>KSh ${contribution.amountDue.toLocaleString()}</td>
+            <td>KSh ${contribution.amountPaid.toLocaleString()}</td>
+            <td>KSh ${balance.toLocaleString()}</td>
+            <td>${status}</td>
+        `;
+
+        contributionsTable.appendChild(row);
+    });
+}
+
+
+
+const paymentForm = document.querySelector('#payment-form');
+
+if (paymentForm) {
+    paymentForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        // Temporary logged-in member for testing
+        const currentMember = 'KVG001';
+
+        const payment = {
+            id: crypto.randomUUID(),
+            membershipNumber: currentMember,
+            amount: Number(document.querySelector('#payment-amount').value),
+            paymentDate: document.querySelector('#payment-date').value,
+            reference: document.querySelector('#payment-reference').value.trim().toUpperCase(),
+            method: document.querySelector('#payment-method').value,
+            status: 'Pending',
+            recordedAt: new Date().toISOString()
+        };
+
+        const payments = JSON.parse(localStorage.getItem('payments')) || [];
+        renderMyPayments()
+
+        const referenceExists = payments.some(function(existingPayment) {
+            return existingPayment.reference === payment.reference;
+        });
+
+        const message = document.querySelector('#payment-message');
+
+        if (referenceExists) {
+            message.textContent = 'This transaction reference has already been recorded.';
+            return;
+        }
+
+        payments.push(payment);
+
+        localStorage.setItem('payments', JSON.stringify(payments));
+
+        if (typeof renderPendingPayments === 'function') {
+            renderPendingPayments();
+        }
+
+        if (typeof renderMpesaTransactions === 'function') {
+            renderMpesaTransactions();
+        }
+
+        message.textContent = 'Payment recorded and awaiting verification.';
+
+        paymentForm.reset();
+    });
 }
 
 const monthFilter = document.querySelector('#contribution-month');
 
-monthFilter.addEventListener('change', function() {
-    renderContributions();
-    updateContributionSummary();
-});
+if (monthFilter) {
+    monthFilter.addEventListener('change', function() {
+        renderContributions();
+        updateContributionSummary();
+    });
+}
 
 const today = new Date();
 
@@ -317,3 +619,4 @@ saveContributions(currentMonthContributions);
 console.log(
     JSON.parse(localStorage.getItem('contributions'))
 );
+

@@ -81,14 +81,25 @@ if (membershipForm) {
 const roleSelector = document.querySelector('#leadership-role');
 const chairmanActions = document.querySelector('#chairman-actions');
 
-function updateRolePermissions() {
-    if (!roleSelector || !chairmanActions) return;
+const paymentVerificationSection = document.querySelector(
+    '#payment-verification-section'
+);
 
-    chairmanActions.style.display =
-        roleSelector.value === 'chairman' ? 'block' : 'none';
+function updateRolePermissions() {
+    if (!roleSelector) return;
+
+    if (chairmanActions) {
+        chairmanActions.style.display =
+            roleSelector.value === 'chairman' ? 'block' : 'none';
+    }
+
+    if (paymentVerificationSection) {
+        paymentVerificationSection.style.display =
+            roleSelector.value === 'treasurer' ? 'block' : 'none';
+    }
 }
 
-if (roleSelector && chairmanActions) {
+if (roleSelector) {
     roleSelector.addEventListener('change', updateRolePermissions);
     updateRolePermissions();
 }
@@ -374,17 +385,21 @@ function renderMembers(memberList = members) {
     });
 }
 renderMembers();
-memberSearch.addEventListener('input', function() {
-    const searchValue = memberSearch.value.toLowerCase();
-    const filteredMembers = members.filter(function(member) {
-    return (
-        member.fullName.toLowerCase().includes(searchValue) ||
-        member.membershipNumber.toLowerCase().includes(searchValue) ||
-        member.phoneNumber.includes(searchValue)
-    );
-});
-renderMembers(filteredMembers);
-});
+if (memberSearch) {
+    memberSearch.addEventListener('input', function() {
+        const searchValue = memberSearch.value.toLowerCase();
+
+        const filteredMembers = members.filter(function(member) {
+            return (
+                member.fullName.toLowerCase().includes(searchValue) ||
+                member.membershipNumber.toLowerCase().includes(searchValue) ||
+                member.phoneNumber.includes(searchValue)
+            );
+        });
+
+        renderMembers(filteredMembers);
+    });
+}
 
 
 // --------------------------------------------------

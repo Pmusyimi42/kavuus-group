@@ -58,38 +58,84 @@
         </div>
     </div>
 
-    <section>
-        <h3>Contribution History</h3>
-        <table class="contribution-table">
+    
+<section id="contribution-history">
+    <h3>Contribution History</h3>
+
+    <table class="contribution-table">
+        <thead>
             <tr>
                 <th>Month</th>
-                <th>Amount</th>
-                <th>Payment Date</th>
+                <th>Amount Due</th>
+                <th>Amount Paid</th>
+                <th>Balance</th>
                 <th>Status</th>
             </tr>
+        </thead>
 
-            <tbody>
+        <tbody id="member-contributions-list">
+        </tbody>
+    </table>
+</section>
+
+    <section id="record-payment">
+        <h3>Record a Payment</h3>
+
+        <div class="payment-form-section">
+            <form id="payment-form">
+                <div class="form-group">
+                    <label for="payment-amount">Amount (KSh)</label>
+                    <input type="number" id="payment-amount" min="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="payment-date">Payment Date</label>
+                    <input type="date" id="payment-date" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="payment-reference">M-Pesa Transaction Reference</label>
+                    <input type="text" id="payment-reference" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="payment-method">Payment Method</label>
+                    <select id="payment-method" required>
+                        <option value="">Select Method</option>
+                        <option value="M-Pesa">M-Pesa</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="cta-button">
+                    Submit Payment
+                </button>
+
+                <p id="payment-message"></p>
+            </form>
+        </div>
+    </section>
+
+    <section id="my-payment-history">
+        <h3>My Payment History</h3>
+
+        <table class="contribution-table">
+            <thead>
                 <tr>
-                    <td>January</td>
-                    <td>KSh 2,000</td>
-                    <td>05/01/2026</td>
-                    <td>Paid</td>
+                    <th>Payment Date</th>
+                    <th>Transaction Reference</th>
+                    <th>Amount</th>
+                    <th>Payment Method</th>
+                    <th>Status</th>
                 </tr>
-                 <tr>
-                    <td>February</td>
-                    <td>KSh 2,000</td>
-                    <td>05/02/2026</td>
-                    <td>Paid</td>
-                </tr>
-                 <tr>
-                    <td>March</td>
-                    <td>KSh 2,000</td>
-                    <td>--</td>
-                    <td>Missed</td>
-                </tr>
+            </thead>
+
+            <tbody id="my-payments-list">
             </tbody>
         </table>
     </section>
+
     <section id="statements">
         <h3>My Financial Statements</h3>
         <div class="dashboard-card">
@@ -235,5 +281,8 @@
         </div>
     </section>
    </main>
+
+   <script src="../js/script.js" defer></script>
+    <script src="../js/contributions.js" defer></script>
 </body>
 </html>
