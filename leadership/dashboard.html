@@ -435,34 +435,43 @@
         </section>
         <section id="dispatch">
             <h3>Dispatch Management</h3>
-            <table class="contribution-table">
-                <thead>
-                    <tr>
-                        <th>Dispatch Cycle</th>
-                        <th>Recipient Name</th>
-                        <th>Amount</th>
-                        <th>Date Received</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Cycle 1</td>
-                        <td>Patrick Kisyula</td>
-                        <td>KSh 80,000</td>
-                        <td>01/04/2026</td>
-                        <td>Received</td>
-                    </tr>
-                     <tr>
-                        <td>Cycle 1</td>
-                        <td>Jane Wanjiku</td>
-                        <td>KSh 80,000</td>
-                        <td>--</td>
-                        <td>Pending</td>
-                    </tr>
-                    
-                </tbody>
-            </table>
+            <form id="dispatch-form">
+                <div class="form-group">
+                    <label for="dispatch-member">Select Member</label>
+                    <select id="dispatch-member" required>
+                        <option value="">Select a member</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="scheduled-dispatch-date">Scheduled Dispatch Date</label>
+                    <select id="scheduled-dispatch-date" required>
+                        <option value="">Select a date</option>
+                        <option value="2027-01-06">6 January 2027</option>
+                        <option value="2027-05-06">6 May 2027</option>
+                        <option value="2027-09-06">6 September 2027</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="cta-button">Schedule Dispatch</button>
+
+                <p id="dispatch-message"></p>
+            </form>
+           <table class="contribution-table">
+            <thead>
+                <tr>
+                    <th>Membership Number</th>
+                    <th>Recipient Name</th>
+                    <th>Scheduled Dispatch Date</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Actual Date Received</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="dispatch-list">
+            </tbody>
+        </table>
             <div class="dashboard-cards">
                 <div class="dashboard-card">
                     <h3>Total Advances Issued</h3>

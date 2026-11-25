@@ -74,6 +74,234 @@ function getContributions() {
         localStorage.getItem('contributions')
     ) || [];
 }
+
+function getDispatches() {
+    return JSON.parse(
+        localStorage.getItem('dispatches')
+    ) || [];
+}
+
+function saveDispatches(dispatches) {
+    localStorage.setItem(
+        'dispatches',
+        JSON.stringify(dispatches)
+    );
+}
+
+function addDispatch(member, scheduledDate) {
+    const dispatches = getDispatches();
+
+    const alreadyExists = dispatches.some(function(dispatch) {
+            return (
+                dispatch.membershipNumber === member.membershipNumber &&
+                dispatch.scheduledDate === scheduledDate
+            );
+        });
+
+        if (alreadyExists) {
+            return false;
+        }
+
+    const newDispatch = {
+        membershipNumber: member.membershipNumber,
+        memberName: member.fullName,
+        scheduledDate: scheduledDate,
+        amount: 80000,
+        status: 'Upcoming',
+        actualDateReceived: null
+    };
+
+    dispatches.push(newDispatch);
+
+    saveDispatches(dispatches);
+    return true;
+}
+function markDispatchAsReceived(membershipNumber, scheduledDate, receivedDate) {
+    const dispatches = getDispatches();
+
+    const dispatch = dispatches.find(function(item) {
+        return (
+            item.membershipNumber === membershipNumber &&
+            item.scheduledDate === scheduledDate
+        );
+    });
+
+    if (!dispatch) {
+        return false;
+    }
+
+    dispatch.status = 'Received';
+    dispatch.actualDateReceived = receivedDate;
+
+    saveDispatches(dispatches);
+
+    return true;
+}
+
+function renderDispatches() {
+    const dispatchTable = document.querySelector('#dispatch-list');
+
+    if (!dispatchTable) return;
+
+    const dispatches = getDispatches();
+
+    dispatchTable.innerHTML = '';
+
+    if (dispatches.length === 0) {
+        dispatchTable.innerHTML = `
+            <tr>
+                <td colspan="7">No dispatch records found.</td>
+            </tr>
+        `;
+        return;
+    }
+
+    dispatches.forEach(function(dispatch) {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+            <td>${dispatch.membershipNumber}</td>
+            <td>${dispatch.memberName}</td>
+            <td>${dispatch.scheduledDate}</td>
+            <td>KSh ${dispatch.amount.toLocaleString()}</td>
+            <td>${dispatch.status}</td>
+            <td>${dispatch.actualDateReceived || '--'}</td>
+            <td>
+                ${dispatch.status === 'Upcoming'
+                    ? `<button class="receive-dispatch-button"
+                        data-membership-number="${dispatch.membershipNumber}"
+                        data-scheduled-date="${dispatch.scheduledDate}">
+                        Mark Received
+                    </button>`
+                    : 'Completed'}
+            </td>
+        `;
+
+        dispatchTable.appendChild(row);
+    });
+}
+
+function populateDispatchMembers() {
+    const memberSelect = document.querySelector('#dispatch-member');
+
+    if (!memberSelect) return;
+
+    const members = getRegisteredMembers();
+
+    members.forEach(function(member) {
+        const option = document.createElement('option');
+
+        option.value = member.membershipNumber;
+        option.textContent = `${member.fullName} (${member.membershipNumber})`;
+
+        memberSelect.appendChild(option);
+    });
+}
+
+function handleDispatchForm() {
+    const dispatchForm = document.querySelector('#dispatch-form');
+
+    if (!dispatchForm) return;
+
+    dispatchForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const membershipNumber =
+            document.querySelector('#dispatch-member').value;
+
+        const scheduledDate =
+            document.querySelector('#scheduled-dispatch-date').value;
+
+        const members = getRegisteredMembers();
+
+        const member = members.find(function(item) {
+            return item.membershipNumber === membershipNumber;
+        });
+
+        const message = document.querySelector('#dispatch-message');
+
+        if (!member) {
+            message.textContent = 'Please select a valid member.';
+            return;
+        }
+
+        const success = addDispatch(member, scheduledDate);
+
+        if (success) {
+            message.textContent = 'Dispatch scheduled successfully.';
+            dispatchForm.reset();
+            renderDispatches();
+        } else {
+            message.textContent = 'This member already has a dispatch scheduled for this date.';
+        }
+    });
+}
+
+function handleDispatchActions() {
+    const dispatchTable = document.querySelector('#dispatch-list');
+
+    if (!dispatchTable) return;
+
+    dispatchTable.addEventListener('click', function(event) {
+        if (!event.target.classList.contains('receive-dispatch-button')) {
+            return;
+        }
+
+        const membershipNumber =
+            event.target.dataset.membershipNumber;
+
+        const scheduledDate =
+            event.target.dataset.scheduledDate;
+
+        const receivedDate = prompt('Enter the actual date received (YYYY-MM-DD):');
+
+        if (!receivedDate) return;
+
+        const success = markDispatchAsReceived(
+            membershipNumber,
+            scheduledDate,
+            receivedDate
+        );
+
+        if (success) {
+            renderDispatches();
+        }
+    });
+}
+
+function renderMemberDispatch() {
+    const currentMember = 'KVG001';
+
+    const dispatches = getDispatches();
+
+    const myDispatches = dispatches.filter(function(dispatch) {
+        return dispatch.membershipNumber === currentMember;
+    });
+
+    const statusElement = document.querySelector('#member-dispatch-status');
+    const dateElement = document.querySelector('#member-dispatch-date');
+
+    if (!statusElement || !dateElement) return;
+
+    if (myDispatches.length === 0) {
+        statusElement.textContent = 'No dispatch record found';
+        dateElement.textContent = '';
+        return;
+    }
+
+    const latestDispatch = myDispatches[myDispatches.length - 1];
+
+    statusElement.textContent = latestDispatch.status;
+
+    if (latestDispatch.status === 'Received') {
+        dateElement.textContent =
+            `Received on: ${latestDispatch.actualDateReceived}`;
+    } else {
+        dateElement.textContent =
+            `Scheduled for: ${latestDispatch.scheduledDate}`;
+    }
+}
+
 function populateContributionMonthFilter() {
     const contributions = getContributions();
     const monthFilter = document.querySelector('#contribution-month');
@@ -310,6 +538,11 @@ renderMyPayments()
 renderMemberContributions();
 updateContributionFines();
 renderMemberSummary()
+renderMemberDispatch();
+renderDispatches();
+populateDispatchMembers();
+handleDispatchForm();
+handleDispatchActions();
 
 function updateContributionSummary() {
     const monthFilter = document.querySelector('#contribution-month');
@@ -698,6 +931,10 @@ function renderMemberContributions() {
 }
 
 function renderMemberSummary() {
+
+    const summaryElement = document.querySelector('#contributions-made');
+
+    if (!summaryElement) return;
     const currentMember = 'KVG001';
 
     const contributions = getContributions();
@@ -760,6 +997,7 @@ function renderMemberSummary() {
     document.querySelector('#outstanding-contributions').textContent =
     `KSh ${outstandingContributions.toLocaleString()}`;
 }
+
 
 
 const paymentForm = document.querySelector('#payment-form');
