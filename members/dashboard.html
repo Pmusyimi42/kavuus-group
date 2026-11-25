@@ -61,23 +61,40 @@
     </form>
 </section>
 
-    <div class="dashboard-cards">
+   <div class="dashboard-cards">
         <div class="dashboard-card">
             <h3>Monthly Contribution</h3>
             <p>KSh 2,000</p>
         </div>
+
         <div class="dashboard-card">
             <h3>Contributions Made</h3>
-            <p>4 Payments</p>
+            <p id="contributions-made">0 Payments</p>
         </div>
+
         <div class="dashboard-card">
             <h3>Total Contributions</h3>
-            <p>KSh 8000</p>
+            <p id="total-contributions">KSh 0</p>
         </div>
+
         <div class="dashboard-card">
             <h3>Missed Contributions</h3>
-            <p> 0</p>
+            <p id="missed-contributions">0</p>
         </div>
+
+        <div class="dashboard-card">
+            <h3>Available Member Credit</h3>
+            <p id="member-credit">KSh 0</p>
+        </div>
+        <div class="dashboard-card">
+            <h3>Outstanding Contributions</h3>
+            <p id="outstanding-contributions">KSh 0</p>
+        </div>
+         <div class="dashboard-card">
+            <h3>Outstanding Fines</h3>
+            <p id="outstanding-fines">KSh 0</p>
+        </div>
+
         <div class="dashboard-card">
             <h3>Dispatch Status</h3>
             <p>Pending</p>
@@ -90,14 +107,16 @@
 
     <table class="contribution-table">
         <thead>
-            <tr>
-                <th>Month</th>
-                <th>Amount Due</th>
-                <th>Amount Paid</th>
-                <th>Balance</th>
-                <th>Status</th>
-            </tr>
-        </thead>
+        <tr>
+            <th>Month</th>
+            <th>Amount Due</th>
+            <th>Amount Paid</th>
+            <th>Balance</th>
+            <th>Fines Charged</th>
+            <th>Fines Paid</th>
+            <th>Status</th>
+        </tr>
+    </thead>
 
         <tbody id="member-contributions-list">
         </tbody>

@@ -309,6 +309,7 @@ renderPendingPayments();
 renderMyPayments()
 renderMemberContributions();
 updateContributionFines();
+renderMemberSummary()
 
 function updateContributionSummary() {
     const monthFilter = document.querySelector('#contribution-month');
@@ -663,7 +664,7 @@ function renderMemberContributions() {
     if (myContributions.length === 0) {
         contributionsTable.innerHTML = `
             <tr>
-                <td colspan="5">No contribution records found.</td>
+                <td colspan="7">No contribution records found.</td>
             </tr>
         `;
         return;
@@ -682,16 +683,82 @@ function renderMemberContributions() {
 
         const row = document.createElement('tr');
 
-        row.innerHTML = `
+       row.innerHTML = `
             <td>${contribution.month}</td>
             <td>KSh ${contribution.amountDue.toLocaleString()}</td>
             <td>KSh ${contribution.amountPaid.toLocaleString()}</td>
             <td>KSh ${balance.toLocaleString()}</td>
+            <td>KSh ${(contribution.fines || 0).toLocaleString()}</td>
+            <td>KSh ${(contribution.finesPaid || 0).toLocaleString()}</td>
             <td>${status}</td>
         `;
 
         contributionsTable.appendChild(row);
     });
+}
+
+function renderMemberSummary() {
+    const currentMember = 'KVG001';
+
+    const contributions = getContributions();
+
+    const myContributions = contributions.filter(function(contribution) {
+        return contribution.membershipNumber === currentMember;
+    });
+
+    // Count contribution months where something has been paid
+    const contributionsMade = myContributions.filter(function(contribution) {
+        return contribution.amountPaid > 0;
+    }).length;
+
+    // Calculate total contributions paid
+    const totalContributions = myContributions.reduce(function(total, contribution) {
+        return total + contribution.amountPaid;
+    }, 0);
+
+    // Count contribution months with an outstanding balance
+    const missedContributions = myContributions.filter(function(contribution) {
+        return contribution.balance > 0;
+    }).length;
+
+    // Calculate available member credit
+    const memberCredits = JSON.parse(
+        localStorage.getItem('memberCredits')
+    ) || [];
+
+    const availableCredit = memberCredits
+        .filter(function(credit) {
+            return credit.membershipNumber === currentMember;
+        })
+        .reduce(function(total, credit) {
+            return total + credit.amount;
+        }, 0);
+
+        const outstandingFines = myContributions.reduce(function(total, contribution) {
+            return total + (contribution.fines - (contribution.finesPaid || 0));
+        }, 0);
+
+        const outstandingContributions = myContributions.reduce(function(total, contribution) {
+            return total + Math.max(0, contribution.amountDue - contribution.amountPaid);
+        }, 0);
+
+    document.querySelector('#contributions-made').textContent =
+        `${contributionsMade} Payments`;
+
+    document.querySelector('#total-contributions').textContent =
+        `KSh ${totalContributions.toLocaleString()}`;
+
+    document.querySelector('#missed-contributions').textContent =
+        missedContributions;
+
+    document.querySelector('#member-credit').textContent =
+        `KSh ${availableCredit.toLocaleString()}`;
+
+    document.querySelector('#outstanding-fines').textContent =
+        `KSh ${outstandingFines.toLocaleString()}`;
+
+    document.querySelector('#outstanding-contributions').textContent =
+    `KSh ${outstandingContributions.toLocaleString()}`;
 }
 
 
