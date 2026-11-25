@@ -26,15 +26,41 @@
         <h3>Welcome back, Patrick!</h3>
         <p>Here's an overview of your Kavuus Group membership.</p>
     </div>
-    <section class="member-profile">
-        <div>
-            <h3>My Profile</h3>
-            <p><strong>Full Name:</strong> Patrick Kisyula</p>
-            <p><strong>Membership Number:</strong> KVG001</p>
-            <p><strong>Membership status:</strong> Active</p>
-            <p><strong>Joining Date:</strong> January 2026</p>
+    
+<section class="member-profile">
+    <h3>My Profile</h3>
+
+    <div id="profile-details">
+        <p><strong>Full Name:</strong> Patrick Kisyula</p>
+        <p><strong>Membership Number:</strong> KVG001</p>
+        <p><strong>Membership Status:</strong> Active</p>
+        <p><strong>Joining Date:</strong> January 2026</p>
+        <p><strong>Phone Number:</strong> Not provided</p>
+        <p><strong>Email:</strong> Not provided</p>
+    </div>
+
+    <button type="button" id="edit-profile-button" class="cta-button">
+        Edit Profile
+    </button>
+
+    <form id="edit-profile-form" hidden>
+        <div class="form-group">
+            <label for="profile-phone">Phone Number</label>
+            <input type="tel" id="profile-phone" required>
         </div>
-    </section>
+
+        <div class="form-group">
+            <label for="profile-email">Email Address</label>
+            <input type="email" id="profile-email" required>
+        </div>
+
+        <button type="submit" class="cta-button">Save Changes</button>
+        <button type="button" id="cancel-profile-edit">Cancel</button>
+
+        <p id="profile-message"></p>
+    </form>
+</section>
+
     <div class="dashboard-cards">
         <div class="dashboard-card">
             <h3>Monthly Contribution</h3>

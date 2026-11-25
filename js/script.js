@@ -484,6 +484,72 @@ if (membersList) {
     });
 }
 
+
+const profileDetails = document.querySelector('#profile-details');
+const editProfileButton = document.querySelector('#edit-profile-button');
+const editProfileForm = document.querySelector('#edit-profile-form');
+const cancelProfileEdit = document.querySelector('#cancel-profile-edit');
+const profileMessage = document.querySelector('#profile-message');
+
+if (profileDetails && editProfileButton && editProfileForm) {
+    const currentMemberNumber = 'KVG001';
+
+    const members = JSON.parse(localStorage.getItem('members')) || [];
+
+    const currentMember = members.find(function(member) {
+        return member.membershipNumber === currentMemberNumber;
+    });
+
+    if (currentMember) {
+        profileDetails.innerHTML = `
+            <p><strong>Full Name:</strong> ${currentMember.fullName}</p>
+            <p><strong>Membership Number:</strong> ${currentMember.membershipNumber}</p>
+            <p><strong>Membership Status:</strong> ${currentMember.status}</p>
+            <p><strong>Joining Date:</strong> ${currentMember.joiningDate}</p>
+            <p><strong>Phone Number:</strong> ${currentMember.phoneNumber}</p>
+            <p><strong>Email:</strong> ${currentMember.email}</p>
+        `;
+        editProfileForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        currentMember.phoneNumber =
+            document.querySelector('#profile-phone').value.trim();
+
+        currentMember.email =
+            document.querySelector('#profile-email').value.trim();
+
+        localStorage.setItem('members', JSON.stringify(members));
+
+        profileDetails.innerHTML = `
+            <p><strong>Full Name:</strong> ${currentMember.fullName}</p>
+            <p><strong>Membership Number:</strong> ${currentMember.membershipNumber}</p>
+            <p><strong>Membership Status:</strong> ${currentMember.status}</p>
+            <p><strong>Joining Date:</strong> ${currentMember.joiningDate}</p>
+            <p><strong>Phone Number:</strong> ${currentMember.phoneNumber}</p>
+            <p><strong>Email:</strong> ${currentMember.email}</p>
+        `;
+
+        editProfileForm.hidden = true;
+        profileMessage.textContent = 'Profile updated successfully.';
+    });
+    cancelProfileEdit.addEventListener('click', function() {
+        editProfileForm.hidden = true;
+        profileMessage.textContent = '';
+    });
+
+    }
+    editProfileButton.addEventListener('click', function() {
+        document.querySelector('#profile-phone').value =
+            currentMember.phoneNumber;
+
+        document.querySelector('#profile-email').value =
+            currentMember.email;
+
+        editProfileForm.hidden = false;
+    });
+}
+
+
 // NOTE:
 // The Edit form loads existing member information.
 // Saving edited information is the next step.
