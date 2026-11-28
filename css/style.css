@@ -286,6 +286,45 @@ header a {
     color: #555;
 }
 
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    padding: 35px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.login-card h1,
+.login-card h2,
+.login-card > p {
+    text-align: center;
+}
+
+.login-card .form-group {
+    margin-bottom: 20px;
+}
+
+.login-card input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.login-card button {
+    width: 100%;
+}
+
 [hidden] {
     display: none !important;
 }

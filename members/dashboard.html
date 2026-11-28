@@ -15,7 +15,7 @@
                 <li></li>
                 <li></li>
                 <li><a href="#statements">My Statements</a></li>
-                <li><a href="../index.html">Logout</a></li>
+                <li><a id="logout-button">Logout</a></li>
             </ul>
         </nav>
    </header>
@@ -182,39 +182,47 @@
         </table>
     </section>
 
-    <section id="statements">
+   <section id="statements">
         <h3>My Financial Statements</h3>
+
         <div class="dashboard-card">
             <h3>Total Contributions</h3>
-            <p>KSh 20,000</p>
+            <p id="statement-total-contributions">KSh 0</p>
         </div>
+
         <div class="dashboard-card">
-            <h3>Dispatch Advance Card</h3>
-            <p>KSh 80,000</p>
+            <h3>Dispatch Advance</h3>
+            <p id="dispatch-advance">KSh 0</p>
         </div>
+
         <div class="dashboard-card">
             <h3>Advance Repaid</h3>
-            <p>KSh 10,000</p>
+            <p id="advance-repaid">KSh 0</p>
         </div>
+
         <div class="dashboard-card">
             <h3>Outstanding Advance</h3>
-            <p>KSh 70,000</p>
+            <p id="outstanding-advance">KSh 0</p>
         </div>
+
         <div class="dashboard-card">
             <h3>Late Payment Fines</h3>
-            <p>KSh 300</p>
+            <p id="late-payment-fines">KSh 0</p>
         </div>
+
         <div class="dashboard-card">
             <h3>Missed Meeting Fines</h3>
-            <p>KSh 200</p>
+            <p id="missed-meeting-fines">KSh 0</p>
         </div>
-         <div class="dashboard-card">
+
+        <div class="dashboard-card">
             <h3>Outstanding Fines</h3>
-            <p>KSh 500</p>
+            <p id="outstanding-fines">KSh 0</p>
         </div>
-           <div class="dashboard-card">
+
+        <div class="dashboard-card">
             <h3>Total Outstanding Obligations</h3>
-            <p>KSh 70,500</p>
+            <p id="total-outstanding">KSh 0</p>
         </div>
     </section>
     <section id="transaction-history">

@@ -231,7 +231,8 @@ if (approveButton) {
             idNumber: application.idNumber,
             supportingMember: application.supportingMember,
             dateJoined: new Date().toISOString(),
-            status: 'Active'
+            status: 'Active',
+            accountActivated: false
         };
 
         members.push(newMember);
@@ -491,13 +492,14 @@ const editProfileForm = document.querySelector('#edit-profile-form');
 const cancelProfileEdit = document.querySelector('#cancel-profile-edit');
 const profileMessage = document.querySelector('#profile-message');
 
+
 if (profileDetails && editProfileButton && editProfileForm) {
-    const currentMemberNumber = 'KVG001';
+    const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
 
     const members = JSON.parse(localStorage.getItem('members')) || [];
 
     const currentMember = members.find(function(member) {
-        return member.membershipNumber === currentMemberNumber;
+        return member.email === loggedInUser.email;
     });
 
     if (currentMember) {
@@ -505,7 +507,7 @@ if (profileDetails && editProfileButton && editProfileForm) {
             <p><strong>Full Name:</strong> ${currentMember.fullName}</p>
             <p><strong>Membership Number:</strong> ${currentMember.membershipNumber}</p>
             <p><strong>Membership Status:</strong> ${currentMember.status}</p>
-            <p><strong>Joining Date:</strong> ${currentMember.joiningDate}</p>
+            <p><strong>Joining Date:</strong> ${new Date(currentMember.dateJoined).toLocaleDateString()}</p>
             <p><strong>Phone Number:</strong> ${currentMember.phoneNumber}</p>
             <p><strong>Email:</strong> ${currentMember.email}</p>
         `;
@@ -524,7 +526,7 @@ if (profileDetails && editProfileButton && editProfileForm) {
             <p><strong>Full Name:</strong> ${currentMember.fullName}</p>
             <p><strong>Membership Number:</strong> ${currentMember.membershipNumber}</p>
             <p><strong>Membership Status:</strong> ${currentMember.status}</p>
-            <p><strong>Joining Date:</strong> ${currentMember.joiningDate}</p>
+            <p><strong>Joining Date:</strong> ${new Date(currentMember.dateJoined).toLocaleDateString()}</p>
             <p><strong>Phone Number:</strong> ${currentMember.phoneNumber}</p>
             <p><strong>Email:</strong> ${currentMember.email}</p>
         `;
@@ -547,6 +549,169 @@ if (profileDetails && editProfileButton && editProfileForm) {
 
         editProfileForm.hidden = false;
     });
+}
+
+// activation form
+
+const activationForm = document.querySelector('#activation-form')
+
+if(activationForm){
+    activationForm.addEventListener('submit', function(event){
+    event.preventDefault()
+    console.log('Activation form submitted');
+    const email = document.querySelector('#email').value
+    const password = document.querySelector('#password').value
+    const confirmPassword = document.querySelector('#confirm-password').value
+    const para = document.querySelector('#activation-message')
+    function findMember(member){
+        return member.email === email
+    }
+    if(password !== confirmPassword){
+       
+        para.textContent = 'Passwords do not match.'
+    }else {
+        const members = JSON.parse(localStorage.getItem('members')) || []
+        const registeredMember = members.find(findMember)
+        console.log('Registered member:', registeredMember)
+        if(!registeredMember){
+            para.textContent =  'No registered member found with this email.'
+            return
+        }
+        if( registeredMember.status === 'Pending' ||
+            registeredMember.status === 'Rejected'){
+                para.textContent = 'Your membership is not approved. You cannot activate your account'
+                return
+            }
+
+            if(registeredMember.accountActivated === true){
+                para.textContent = 'Account already active.'
+            }
+             const memberIndex = members.findIndex(function(member){
+                return member.membershipNumber === registeredMember.membershipNumber
+             })
+
+            if(memberIndex !== -1){
+                members[memberIndex].password = password
+                members[memberIndex].accountActivated = true
+
+                localStorage.setItem('members', JSON.stringify(members))
+
+                para.textContent = 'Account activated successfully!'
+            }
+    }
+    })
+}
+
+
+const loginForm = document.querySelector('#login-form')
+
+if (loginForm) {
+    loginForm.addEventListener('submit', function(event) {
+        event.preventDefault()
+
+        const email = document.querySelector('#email').value
+        const password = document.querySelector('#password').value
+
+        if (!email || !password) {
+            alert('Please enter both email and password')
+            return
+        }
+
+        const users = [
+            {
+                email: 'member@gmail.com',
+                password: 'member123',
+                role: 'member'
+            },
+            {
+                email: 'leader@gmail.com',
+                password: 'leader123',
+                role: 'leadership'
+            }
+        ]
+
+        const leadershipUser = users.find(function(account) {
+            return account.email === email && account.password === password
+        })
+
+        const members = JSON.parse(localStorage.getItem('members')) || []
+
+        const registeredMember = members.find(function(member) {
+            return member.email === email &&
+                member.password === password &&
+                member.accountActivated === true &&
+                member.status === 'Active'
+        })
+
+        const user = leadershipUser || registeredMember
+
+        if (!user) {
+            alert('Invalid email or password')
+            return
+        }
+
+        const role = leadershipUser ? 'leadership' : 'member'
+
+        localStorage.setItem('loggedInUser', JSON.stringify({
+            email: user.email,
+            role: role
+        }))
+
+        if (role === 'member') {
+            window.location.href = 'members/dashboard.html'
+        } else {
+            window.location.href = 'leadership/dashboard.html'
+        }
+    })
+}
+
+const logoutButton = document.querySelector('#logout-button');
+
+if (logoutButton) {
+    logoutButton.addEventListener('click', function() {
+        localStorage.removeItem('loggedInUser');
+        window.location.href = '../login.html';
+    });
+}
+
+window.addEventListener('pageshow', function() {
+    const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+
+    const currentPath = window.location.pathname
+
+    if (currentPath.includes('/members/') &&
+        (!loggedInUser || loggedInUser.role !== 'member')) {
+        window.location.replace('../login.html')
+    }
+
+    if (currentPath.includes('/leadership/') &&
+        (!loggedInUser || loggedInUser.role !== 'leadership')) {
+        window.location.replace('../login.html')
+    }
+})
+
+const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+
+
+if (loggedInUser && loggedInUser.role === 'member') {
+    const currentMember = members.find(function(member) {
+        return member.email === loggedInUser.email;
+    });
+
+   
+    const contributions = JSON.parse(localStorage.getItem('contributions')) || []
+
+    const memberContributions = contributions.filter(function(contribution){
+        return contribution.membershipNumber === currentMember.membershipNumber
+    })
+
+    const totalMemberContributions = memberContributions.reduce(function(totalContribution, record){
+        return record.amountPaid + totalContribution
+    }, 0)
+
+   
+    const para = document.querySelector('#statement-total-contributions')
+    para.textContent = `KSh ${totalMemberContributions.toLocaleString()}`
 }
 
 

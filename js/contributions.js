@@ -262,6 +262,8 @@ function handleDispatchActions() {
             scheduledDate,
             receivedDate
         );
+        renderGroupReserve();
+
 
         if (success) {
             renderDispatches();
@@ -533,6 +535,7 @@ renderContributions();
 updateContributionSummary();
 populatePaymentMembers();
 renderMpesaTransactions();
+renderTransactionSummary();
 renderPendingPayments();
 renderMyPayments()
 renderMemberContributions();
@@ -540,9 +543,15 @@ updateContributionFines();
 renderMemberSummary()
 renderMemberDispatch();
 renderDispatches();
+renderTotalMembers();
 populateDispatchMembers();
 handleDispatchForm();
 handleDispatchActions();
+renderPendingApplications();
+renderMonthlyContributions();
+handleGroupTransactionForm();
+renderGroupTransactions();
+renderGroupReserve();
 
 function updateContributionSummary() {
     const monthFilter = document.querySelector('#contribution-month');
@@ -651,6 +660,7 @@ function renderPendingPayments() {
 }
 
 function allocateVerifiedPayment(payment) {
+    renderGroupReserve();
     if (
         !payment ||
         payment.status !== 'Verified' ||
@@ -834,6 +844,45 @@ function renderMpesaTransactions() {
     });
 }
 
+function renderTransactionSummary() {
+    const totalElement = document.querySelector('#total-transactions')
+    const verifiedElement = document.querySelector('#verified-payments')
+    const pendingElement = document.querySelector('#pending-verification')
+
+    // Exit if the transaction summary elements don't exist
+    if (!totalElement || !verifiedElement || !pendingElement) {
+        return
+    }
+
+    const payments = JSON.parse(localStorage.getItem('payments')) || []
+
+    const totalTransactions = payments.length
+
+    const verifiedPayments = payments
+        .filter(function(payment) {
+            return payment.status === 'Verified'
+        })
+        .reduce(function(total, payment) {
+            return total + payment.amount
+        }, 0)
+
+    const pendingVerification = payments
+        .filter(function(payment) {
+            return payment.status === 'Pending'
+        })
+        .reduce(function(total, payment) {
+            return total + payment.amount
+        }, 0)
+
+    totalElement.textContent = totalTransactions
+
+    verifiedElement.textContent =
+        `KSh ${verifiedPayments.toLocaleString()}`
+
+    pendingElement.textContent =
+        `KSh ${pendingVerification.toLocaleString()}`
+}
+
 
 function renderMyPayments() {
     const paymentsTable = document.querySelector('#my-payments-list');
@@ -996,6 +1045,172 @@ function renderMemberSummary() {
 
     document.querySelector('#outstanding-contributions').textContent =
     `KSh ${outstandingContributions.toLocaleString()}`;
+}
+
+function renderTotalMembers() {
+    const totalMembersElement = document.querySelector('#total-members')
+
+    // Exit if this element doesn't exist on the current page
+    if (!totalMembersElement) {
+        return
+    }
+
+    const members = getRegisteredMembers()
+
+    totalMembersElement.textContent = members.length
+}
+
+function renderPendingApplications() {
+    const applicationsElement = document.querySelector('#pending-applications');
+
+    if (!applicationsElement) return;
+
+    const applications = JSON.parse(localStorage.getItem('applications')) || [];
+
+    const pendingApplications = applications.filter(function(application) {
+        return application.status === 'Pending';
+    });
+
+    applicationsElement.textContent = pendingApplications.length;
+}
+
+function renderMonthlyContributions() {
+    const element = document.querySelector('#monthly-contributions');
+
+    if (!element) return;
+
+    const members = getRegisteredMembers();
+    const monthlyTotal = members.length * MONTHLY_CONTRIBUTION;
+
+    element.textContent = `KSh ${monthlyTotal.toLocaleString()}`;
+}
+
+function getGroupTransactions() {
+    return JSON.parse(localStorage.getItem('groupTransactions')) || [];
+}
+
+function saveGroupTransactions(transactions) {
+    localStorage.setItem('groupTransactions', JSON.stringify(transactions));
+}
+
+function handleGroupTransactionForm() {
+    const form = document.querySelector('#group-transaction-form');
+
+    if (!form) return;
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const transaction = {
+            id: crypto.randomUUID(),
+            date: document.querySelector('#transaction-date').value,
+            description: document.querySelector('#transaction-description').value,
+            category: document.querySelector('#transaction-category').value,
+            type: document.querySelector('#transaction-type').value,
+            amount: Number(document.querySelector('#transaction-amount').value),
+            recordedBy: 'Leadership'
+        };
+
+        const transactions = getGroupTransactions();
+
+        transactions.push(transaction);
+        saveGroupTransactions(transactions);
+
+        renderGroupTransactions();
+        renderGroupReserve();
+
+        document.querySelector('#transaction-message').textContent =
+            'Transaction recorded successfully.';
+
+        form.reset();
+    });
+}
+
+function renderGroupTransactions() {
+    const tableBody = document.querySelector('#group-transactions-list');
+
+    if (!tableBody) return;
+
+    const transactions = getGroupTransactions();
+
+    tableBody.innerHTML = '';
+
+    if (transactions.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="6">No group transactions recorded yet.</td>
+            </tr>
+        `;
+        return;
+    }
+
+    transactions.forEach(function(transaction) {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+            <td>${transaction.date}</td>
+            <td>${transaction.description}</td>
+            <td>${transaction.category}</td>
+            <td>${transaction.type}</td>
+            <td>KSh ${transaction.amount.toLocaleString()}</td>
+            <td>${transaction.recordedBy}</td>
+        `;
+
+        tableBody.appendChild(row);
+    });
+}
+
+function calculateGroupReserve() {
+    const contributions = getContributions();
+    const dispatches = getDispatches();
+    const transactions = getGroupTransactions();
+
+    const contributionsCollected = contributions.reduce(function(total, contribution) {
+        return total + Number(contribution.amountPaid || 0);
+    }, 0);
+
+    const finesCollected = contributions.reduce(function(total, contribution) {
+        return total + Number(contribution.finesPaid || 0);
+    }, 0);
+
+    const dispatchesPaid = dispatches
+        .filter(function(dispatch) {
+            return dispatch.status === 'Received';
+        })
+        .reduce(function(total, dispatch) {
+            return total + Number(dispatch.amount || 0);
+        }, 0);
+
+    const otherIncome = transactions
+        .filter(function(transaction) {
+            return transaction.type === 'Income';
+        })
+        .reduce(function(total, transaction) {
+            return total + Number(transaction.amount || 0);
+        }, 0);
+
+    const otherExpenses = transactions
+        .filter(function(transaction) {
+            return transaction.type === 'Expense';
+        })
+        .reduce(function(total, transaction) {
+            return total + Number(transaction.amount || 0);
+        }, 0);
+
+        
+
+    return contributionsCollected + finesCollected +
+        otherIncome - dispatchesPaid - otherExpenses;
+}
+
+function renderGroupReserve() {
+    const reserveElement = document.querySelector('#group-reserve');
+
+    if (!reserveElement) return;
+
+    const reserve = calculateGroupReserve();
+
+    reserveElement.textContent = `KSh ${reserve.toLocaleString()}`;
 }
 
 
